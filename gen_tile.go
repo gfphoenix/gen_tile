@@ -89,9 +89,17 @@ func (ts *TileSheet) Gen(img image.Image) image.Image {
 	}
 	
 	r0 := img.Bounds()
-	dx := (r.Max.X - ts.padding_x*2 - r0.Dx())/(ts.cols-1)
-	dy := (r.Max.Y - ts.padding_y*2 - r0.Dy())/(ts.rows-1)
-	r0 = r0.Add(image.Point{ts.padding_x, ts.padding_y})
+	var dx, dy int
+	off_x, off_y := (r.Dx()-r0.Dx())/2, (r.Dy()-r0.Dy())/2
+	if ts.cols >=2 {
+		dx = (r.Max.X - ts.padding_x*2 - r0.Dx())/(ts.cols-1)
+		off_x = ts.padding_x
+	}
+	if ts.rows >=2 {
+		dy = (r.Max.Y - ts.padding_y*2 - r0.Dy())/(ts.rows-1)
+		off_y = ts.padding_y
+	}
+	r0 = r0.Add(image.Point{off_x, off_y})
 	for x:=0; x<ts.cols; x++ {
 		for y:=0; y<ts.rows; y++ {
 			draw.Draw(dst, r0.Add(image.Point{dx*x, dy*y}), img, zp, draw.Over)
